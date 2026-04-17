@@ -1,0 +1,133 @@
+# =========================
+
+# .NET / ASP.NET Core
+
+# =========================
+
+bin/
+obj/
+out/
+*.dll
+*.exe
+*.pdb
+
+# Visual Studio
+
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Rider / VS Code
+
+.idea/
+.vscode/
+*.code-workspace
+
+# =========================
+
+# Logs
+
+# =========================
+
+logs/
+*.log
+*.txt
+
+# =========================
+
+# Environment Files
+
+# =========================
+
+.env
+.env.*
+appsettings.Development.json
+appsettings.Local.json
+
+# =========================
+
+# Database
+
+# =========================
+
+*.mdf
+*.ldf
+*.sqlite
+*.db
+
+# =========================
+
+# NuGet
+
+# =========================
+
+*.nupkg
+packages/
+.nuget/
+
+# =========================
+
+# OS Files
+
+# =========================
+
+.DS_Store
+Thumbs.db
+
+# =========================
+
+# Docker
+
+# =========================
+
+docker-compose.override.yml
+
+# =========================
+
+# Node / Angular (future frontend)
+
+# =========================
+
+node_modules/
+dist/
+.angular/
+coverage/
+
+# =========================
+
+# Redis / Cache temp
+
+# =========================
+
+*.rdb
+
+# =========================
+
+# Secrets
+
+# =========================
+
+secrets.json
+*.key
+*.pem
+*.pfx
+
+# =========================
+
+# Test Results
+
+# =========================
+
+TestResults/
+*.trx
+
+# =========================
+
+# Misc
+
+# =========================
+
+*.swp
+*~
