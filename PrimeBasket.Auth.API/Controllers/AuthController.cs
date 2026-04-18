@@ -1,0 +1,24 @@
+using Microsoft.AspNetCore.Mvc;
+using PrimeBasket.Auth.API.DTOs;
+using PrimeBasket.Auth.API.Interfaces.Auth;
+
+namespace PrimeBasket.Auth.API.Controllers;
+
+[ApiController]
+[Route("api/auth")]
+public class AuthController : ControllerBase
+{
+  private readonly IAuthService _authService;
+
+  public AuthController(IAuthService authService)
+  {
+    _authService = authService;
+  }
+
+  [HttpPost("register")]
+  public async Task<IActionResult> Register(RegisterRequest request)
+  {
+    var result = await _authService.RegisterAsync(request);
+    return Ok(result);
+  }
+}
