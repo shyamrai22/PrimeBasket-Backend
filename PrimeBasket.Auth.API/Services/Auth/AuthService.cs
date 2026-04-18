@@ -2,6 +2,7 @@ using PrimeBasket.Auth.API.Data;
 using PrimeBasket.Auth.API.DTOs;
 using PrimeBasket.Auth.API.Entities;
 using PrimeBasket.Auth.API.Interfaces.Auth;
+using Microsoft.EntityFrameworkCore;
 
 namespace PrimeBasket.Auth.API.Services.Auth;
 
@@ -34,5 +35,20 @@ public class AuthService : IAuthService
     await _context.SaveChangesAsync();
 
     return "User registered successfully";
+  }
+
+  public async Task<string> LoginAsync(LoginRequest request)
+  {
+    var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
+
+    if (user == null)
+      return "Invalid credentials";
+
+    var isValid = _hasher.Verify(request.Password, user.PasswordHash);
+
+    if (!isValid)
+      return "Invalid credentials";
+
+    return "Login successful";
   }
 }
