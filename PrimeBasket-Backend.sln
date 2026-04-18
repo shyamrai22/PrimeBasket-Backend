@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrimeBasket.Auth.API", "Pri
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrimeBasket.ApiGateway", "PrimeBasket.ApiGateway\PrimeBasket.ApiGateway.csproj", "{7496D8B2-226A-419D-834D-9FB2AC4E845E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrimeBasket.Product.API", "PrimeBasket.Product.API\PrimeBasket.Product.API.csproj", "{CA5C95A5-8C87-4803-8D2F-D2017CF8A035}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,6 +22,10 @@ Global
 		{7496D8B2-226A-419D-834D-9FB2AC4E845E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7496D8B2-226A-419D-834D-9FB2AC4E845E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7496D8B2-226A-419D-834D-9FB2AC4E845E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CA5C95A5-8C87-4803-8D2F-D2017CF8A035}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA5C95A5-8C87-4803-8D2F-D2017CF8A035}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA5C95A5-8C87-4803-8D2F-D2017CF8A035}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA5C95A5-8C87-4803-8D2F-D2017CF8A035}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
