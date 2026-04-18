@@ -1,8 +1,10 @@
-Microsoft Visual Studio Solution File, Format Version 12.00
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.2.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrimeBasket.Auth.API", "PrimeBasket.Auth.API\PrimeBasket.Auth.API.csproj", "{BA093C40-6972-D62C-2055-79DD61651E0A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrimeBasket.ApiGateway", "PrimeBasket.ApiGateway\PrimeBasket.ApiGateway.csproj", "{7496D8B2-226A-419D-834D-9FB2AC4E845E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -14,6 +16,10 @@ Global
 		{BA093C40-6972-D62C-2055-79DD61651E0A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BA093C40-6972-D62C-2055-79DD61651E0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BA093C40-6972-D62C-2055-79DD61651E0A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7496D8B2-226A-419D-834D-9FB2AC4E845E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7496D8B2-226A-419D-834D-9FB2AC4E845E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7496D8B2-226A-419D-834D-9FB2AC4E845E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7496D8B2-226A-419D-834D-9FB2AC4E845E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

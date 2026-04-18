@@ -1,0 +1,6 @@
+@PrimeBasket.ApiGateway_HostAddress = http://localhost:5090
+
+GET {{PrimeBasket.ApiGateway_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
