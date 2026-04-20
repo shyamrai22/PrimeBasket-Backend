@@ -17,6 +17,15 @@ public class ProductController : ControllerBase
     _service = service;
   }
 
+  [AllowAnonymous]
+  [HttpGet]
+  public async Task<IActionResult> GetAll()
+  {
+    var products = await _service.GetAllAsync();
+    return Ok(products);
+  }
+
+  [Authorize(Roles = "Admin,admin")]
   [HttpPost]
   public async Task<IActionResult> Add(ProductRequest request)
   {
@@ -24,10 +33,21 @@ public class ProductController : ControllerBase
     return Ok(product);
   }
 
-  [HttpGet]
-  public async Task<IActionResult> GetAll()
+  [Authorize(Roles = "Admin,admin")]
+  [HttpPut("{id}")]
+  public async Task<IActionResult> Update(int id, ProductRequest request)
   {
-    var products = await _service.GetAllAsync();
-    return Ok(products);
+    var product = await _service.UpdateProductAsync(id, request);
+    if (product == null) return NotFound("Product not found");
+    return Ok(product);
+  }
+
+  [Authorize(Roles = "Admin,admin")]
+  [HttpDelete("{id}")]
+  public async Task<IActionResult> Delete(int id)
+  {
+    var result = await _service.DeleteProductAsync(id);
+    if (!result) return NotFound("Product not found");
+    return NoContent();
   }
 }

@@ -33,7 +33,8 @@ public class AuthService : IAuthService
     {
       FullName = request.FullName,
       Email = email,
-      PasswordHash = _hasher.Hash(request.Password)
+      PasswordHash = _hasher.Hash(request.Password),
+      Role = request.Role
     };
 
     _context.Users.Add(user);

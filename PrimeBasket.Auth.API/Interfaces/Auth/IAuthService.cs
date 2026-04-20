@@ -1,5 +1,4 @@
 using PrimeBasket.Auth.API.DTOs;
-using PrimeBasket.Auth.API.DTOs;
 
 
 namespace PrimeBasket.Auth.API.Interfaces.Auth;
