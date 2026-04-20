@@ -34,4 +34,28 @@ public class ProductService : IProductService
   {
     return await _context.Products.ToListAsync();
   }
+
+  public async Task<PrimeBasket.Product.API.Entities.Product?> UpdateProductAsync(int id, ProductRequest request)
+  {
+    var product = await _context.Products.FindAsync(id);
+    if (product == null) return null;
+
+    product.Name = request.Name;
+    product.Description = request.Description;
+    product.Price = request.Price;
+    product.Stock = request.Stock;
+
+    await _context.SaveChangesAsync();
+    return product;
+  }
+
+  public async Task<bool> DeleteProductAsync(int id)
+  {
+    var product = await _context.Products.FindAsync(id);
+    if (product == null) return false;
+
+    _context.Products.Remove(product);
+    await _context.SaveChangesAsync();
+    return true;
+  }
 }
