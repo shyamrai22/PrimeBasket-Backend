@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using PrimeBasket.Product.API.DTOs;
 using PrimeBasket.Product.API.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 namespace PrimeBasket.Product.API.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/products")]
 public class ProductController : ControllerBase
