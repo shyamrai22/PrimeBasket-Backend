@@ -60,4 +60,9 @@ public class AuthService : IAuthService
 
     return _tokenService.GenerateToken(user);
   }
+
+  public async Task<List<User>> GetAllUsersAsync()
+  {
+    return await _context.Users.ToListAsync();
+  }
 }

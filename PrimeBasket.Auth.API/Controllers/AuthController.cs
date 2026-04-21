@@ -46,4 +46,12 @@ public class AuthController : ControllerBase
   {
     return Ok("You are authenticated");
   }
+
+  [AllowAnonymous]
+  [HttpGet("users")]
+  public async Task<IActionResult> GetUsers()
+  {
+    var users = await _authService.GetAllUsersAsync();
+    return Ok(users);
+  }
 }

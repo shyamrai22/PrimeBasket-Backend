@@ -3,10 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using PrimeBasket.Cart.API.DTOs;
 using PrimeBasket.Cart.API.Interfaces;
+using PrimeBasket.Cart.API.Exceptions;
 
 namespace PrimeBasket.Cart.API.Controllers;
 
-[Authorize] // Cart requires login
+[Authorize]
 [ApiController]
 [Route("api/cart")]
 public class CartController : ControllerBase
@@ -34,8 +35,19 @@ public class CartController : ControllerBase
   [HttpPost]
   public async Task<IActionResult> AddToCart(AddToCartRequest request)
   {
-    var userId = GetUserId();
-    var cart = await _service.AddToCartAsync(userId, request);
-    return Ok(cart);
+    try
+    {
+      var userId = GetUserId();
+      var cart = await _service.AddToCartAsync(userId, request);
+      return Ok(cart);
+    }
+    catch (NotFoundException ex)
+    {
+      return NotFound(new { message = ex.Message });
+    }
+    catch (ArgumentException ex)
+    {
+      return BadRequest(new { message = ex.Message });
+    }
   }
 }

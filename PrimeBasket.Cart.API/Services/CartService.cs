@@ -3,16 +3,20 @@ using PrimeBasket.Cart.API.Data;
 using PrimeBasket.Cart.API.DTOs;
 using PrimeBasket.Cart.API.Entities;
 using PrimeBasket.Cart.API.Interfaces;
+using PrimeBasket.Cart.API.Exceptions;
+using System.Net.Http.Json;
 
 namespace PrimeBasket.Cart.API.Services;
 
 public class CartService : ICartService
 {
   private readonly CartDbContext _context;
+  private readonly HttpClient _httpClient;
 
-  public CartService(CartDbContext context)
+  public CartService(CartDbContext context, IHttpClientFactory httpClientFactory)
   {
     _context = context;
+    _httpClient = httpClientFactory.CreateClient("ProductService");
   }
 
   public async Task<CartResponse> GetCartAsync(int userId)
@@ -34,6 +38,19 @@ public class CartService : ICartService
 
   public async Task<CartResponse> AddToCartAsync(int userId, AddToCartRequest request)
   {
+    // Quantity validation
+    if (request.Quantity <= 0 || request.Quantity > 100)
+      throw new ArgumentException("Quantity must be between 1 and 100");
+
+    // Get product stock (this replaces ProductExists)
+    var stock = await GetProductStock(request.ProductId);
+
+    if (stock == null)
+      throw new NotFoundException("Product not found");
+
+    if (request.Quantity > stock)
+      throw new ArgumentException($"Only {stock} items available in stock");
+
     var cart = await _context.Carts
         .Include(c => c.Items)
         .FirstOrDefaultAsync(c => c.UserId == userId);
@@ -49,7 +66,12 @@ public class CartService : ICartService
 
     if (existingItem != null)
     {
-      existingItem.Quantity += request.Quantity;
+      var newQuantity = existingItem.Quantity + request.Quantity;
+
+      if (newQuantity > stock)
+        throw new ArgumentException($"Only {stock} items available in stock");
+
+      existingItem.Quantity = newQuantity;
     }
     else
     {
@@ -65,7 +87,21 @@ public class CartService : ICartService
     return MapToResponse(cart);
   }
 
-  // Mapper (important)
+  // STOCK VALIDATION METHOD (core logic)
+  private async Task<int?> GetProductStock(int productId)
+  {
+    var response = await _httpClient.GetAsync($"/api/products/{productId}/stock");
+
+    Console.WriteLine($"Stock check → ID: {productId}, Status: {response.StatusCode}");
+
+    if (!response.IsSuccessStatusCode)
+      return null;
+
+    var stock = await response.Content.ReadFromJsonAsync<int>();
+
+    return stock;
+  }
+
   private CartResponse MapToResponse(PrimeBasket.Cart.API.Entities.Cart cart)
   {
     return new CartResponse
