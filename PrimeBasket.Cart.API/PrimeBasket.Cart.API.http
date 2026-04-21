@@ -1,0 +1,6 @@
+@PrimeBasket.Cart.API_HostAddress = http://localhost:5012
+
+GET {{PrimeBasket.Cart.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
