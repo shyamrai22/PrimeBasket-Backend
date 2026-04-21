@@ -58,4 +58,9 @@ public class ProductService : IProductService
     await _context.SaveChangesAsync();
     return true;
   }
+
+  public async Task<PrimeBasket.Product.API.Entities.Product> GetByIdAsync(int id)
+  {
+    return await _context.Products.FindAsync(id);
+  }
 }

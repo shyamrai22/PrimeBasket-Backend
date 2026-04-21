@@ -25,6 +25,30 @@ public class ProductController : ControllerBase
     return Ok(products);
   }
 
+  [AllowAnonymous]
+  [HttpGet("{id}/stock")]
+  public async Task<IActionResult> GetStock(int id)
+  {
+    var product = await _service.GetByIdAsync(id);
+
+    if (product == null)
+      return NotFound();
+
+    return Ok(product.Stock);
+  }
+
+  [AllowAnonymous]
+  [HttpGet("{id}")]
+  public async Task<IActionResult> GetById(int id)
+  {
+    var product = await _service.GetByIdAsync(id);
+
+    if (product == null)
+      return NotFound();
+
+    return Ok(product);
+  }
+
   [Authorize(Roles = "Admin,admin")]
   [HttpPost]
   public async Task<IActionResult> Add(ProductRequest request)

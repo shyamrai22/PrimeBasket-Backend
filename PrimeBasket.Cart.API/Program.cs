@@ -70,11 +70,11 @@ builder.Services.AddSwaggerGen(options =>
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
-        Type = SecuritySchemeType.ApiKey,
-        Scheme = "Bearer",
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
         BearerFormat = "JWT",
         In = ParameterLocation.Header,
-        Description = "Enter 'Bearer' [space] and then your valid token. Example: \"Bearer eyJhbGci...\""
+        Description = "Enter your JWT token directly here (Swagger will add 'Bearer' for you)"
     });
 
     options.AddSecurityRequirement(new OpenApiSecurityRequirement
@@ -91,6 +91,11 @@ builder.Services.AddSwaggerGen(options =>
             Array.Empty<string>()
         }
     });
+});
+
+builder.Services.AddHttpClient("ProductService", client =>
+{
+    client.BaseAddress = new Uri("http://localhost:5209/");
 });
 
 var app = builder.Build();
