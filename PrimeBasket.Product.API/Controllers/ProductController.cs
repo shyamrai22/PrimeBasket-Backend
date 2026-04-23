@@ -17,6 +17,7 @@ public class ProductController : ControllerBase
     _service = service;
   }
 
+  // -------------------- GET ALL --------------------
   [AllowAnonymous]
   [HttpGet]
   public async Task<IActionResult> GetAll()
@@ -25,18 +26,7 @@ public class ProductController : ControllerBase
     return Ok(products);
   }
 
-  [AllowAnonymous]
-  [HttpGet("{id}/stock")]
-  public async Task<IActionResult> GetStock(int id)
-  {
-    var product = await _service.GetByIdAsync(id);
-
-    if (product == null)
-      return NotFound();
-
-    return Ok(product.Stock);
-  }
-
+  // -------------------- GET BY ID --------------------
   [AllowAnonymous]
   [HttpGet("{id}")]
   public async Task<IActionResult> GetById(int id)
@@ -44,11 +34,25 @@ public class ProductController : ControllerBase
     var product = await _service.GetByIdAsync(id);
 
     if (product == null)
-      return NotFound();
+      return NotFound("Product not found");
 
     return Ok(product);
   }
 
+  // -------------------- GET STOCK --------------------
+  [AllowAnonymous]
+  [HttpGet("{id}/stock")]
+  public async Task<IActionResult> GetStock(int id)
+  {
+    var product = await _service.GetByIdAsync(id);
+
+    if (product == null)
+      return NotFound("Product not found");
+
+    return Ok(product.Stock);
+  }
+
+  // -------------------- ADD PRODUCT --------------------
   [Authorize(Roles = "Admin,admin")]
   [HttpPost]
   public async Task<IActionResult> Add(ProductRequest request)
@@ -57,21 +61,74 @@ public class ProductController : ControllerBase
     return Ok(product);
   }
 
+  // -------------------- UPDATE PRODUCT --------------------
   [Authorize(Roles = "Admin,admin")]
   [HttpPut("{id}")]
   public async Task<IActionResult> Update(int id, ProductRequest request)
   {
     var product = await _service.UpdateProductAsync(id, request);
-    if (product == null) return NotFound("Product not found");
+
+    if (product == null)
+      return NotFound("Product not found");
+
     return Ok(product);
   }
 
+  // -------------------- DELETE PRODUCT --------------------
   [Authorize(Roles = "Admin,admin")]
   [HttpDelete("{id}")]
   public async Task<IActionResult> Delete(int id)
   {
     var result = await _service.DeleteProductAsync(id);
-    if (!result) return NotFound("Product not found");
+
+    if (!result)
+      return NotFound("Product not found");
+
     return NoContent();
+  }
+
+  // -------------------- REDUCE STOCK --------------------
+  public class ReduceStockRequest
+  {
+    public int Quantity { get; set; }
+  }
+
+  [Authorize]
+  [HttpPost("{id}/reduce-stock")]
+  public async Task<IActionResult> ReduceStock(int id, [FromBody] ReduceStockRequest request)
+  {
+    var product = await _service.GetByIdAsync(id);
+
+    if (product == null)
+      return NotFound("Product not found");
+
+    if (request.Quantity <= 0)
+      return BadRequest("Invalid quantity");
+
+    if (product.Stock < request.Quantity)
+      return BadRequest($"Not enough stock. Available: {product.Stock}");
+
+    // CORE LOGIC
+    product.Stock -= request.Quantity;
+
+    await _service.UpdateStockAsync(product);
+
+    return Ok("Stock reduced successfully");
+  }
+
+  [Authorize]
+  [HttpPost("{id}/add-stock")]
+  public async Task<IActionResult> AddStock(int id, [FromBody] ReduceStockRequest request)
+  {
+    var product = await _service.GetByIdAsync(id);
+
+    if (product == null)
+      return NotFound("Product not found");
+
+    product.Stock += request.Quantity;
+
+    await _service.UpdateStockAsync(product);
+
+    return Ok("Stock restored");
   }
 }

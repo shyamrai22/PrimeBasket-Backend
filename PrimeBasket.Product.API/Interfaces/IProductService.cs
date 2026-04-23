@@ -9,4 +9,5 @@ public interface IProductService
   Task<PrimeBasket.Product.API.Entities.Product?> UpdateProductAsync(int id, ProductRequest request);
   Task<bool> DeleteProductAsync(int id);
   Task<PrimeBasket.Product.API.Entities.Product?> GetByIdAsync(int id);
+  Task UpdateStockAsync(PrimeBasket.Product.API.Entities.Product product);
 }

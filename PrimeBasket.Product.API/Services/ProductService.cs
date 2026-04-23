@@ -49,6 +49,12 @@ public class ProductService : IProductService
     return product;
   }
 
+  public async Task UpdateStockAsync(PrimeBasket.Product.API.Entities.Product product)
+  {
+    _context.Products.Update(product);
+    await _context.SaveChangesAsync();
+  }
+
   public async Task<bool> DeleteProductAsync(int id)
   {
     var product = await _context.Products.FindAsync(id);
