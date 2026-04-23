@@ -6,4 +6,5 @@ public interface ICartService
 {
   Task<CartResponse> GetCartAsync(int userId);
   Task<CartResponse> AddToCartAsync(int userId, AddToCartRequest request);
+  Task ClearCartAsync(int userId);
 }

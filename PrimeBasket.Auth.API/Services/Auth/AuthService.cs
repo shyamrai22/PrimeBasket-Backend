@@ -11,12 +11,18 @@ public class AuthService : IAuthService
   private readonly AuthDbContext _context;
   private readonly PasswordHasher _hasher;
   private readonly TokenService _tokenService;
+  private readonly IConfiguration _config;
 
-  public AuthService(AuthDbContext context, TokenService tokenService, PasswordHasher hasher)
+  public AuthService(
+      AuthDbContext context,
+      TokenService tokenService,
+      PasswordHasher hasher,
+      IConfiguration config)
   {
     _context = context;
     _tokenService = tokenService;
     _hasher = hasher;
+    _config = config;
   }
 
   public async Task<string> RegisterAsync(RegisterRequest request)
@@ -29,12 +35,23 @@ public class AuthService : IAuthService
     if (exists)
       return "User already exists";
 
+
+    string role = "Customer";
+
+    var adminKeyFromConfig = _config["AdminSettings:AdminKey"];
+
+    if (!string.IsNullOrEmpty(request.AdminKey) &&
+        request.AdminKey == adminKeyFromConfig)
+    {
+      role = "Admin";
+    }
+
     var user = new User
     {
       FullName = request.FullName,
       Email = email,
       PasswordHash = _hasher.Hash(request.Password),
-      Role = request.Role
+      Role = role
     };
 
     _context.Users.Add(user);

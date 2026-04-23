@@ -115,4 +115,19 @@ public class CartService : ICartService
       }).ToList()
     };
   }
+
+  public async Task ClearCartAsync(int userId)
+  {
+    var cart = await _context.Carts
+        .Include(c => c.Items)
+        .FirstOrDefaultAsync(c => c.UserId == userId);
+
+    if (cart == null)
+      return;
+
+    _context.CartItems.RemoveRange(cart.Items);
+    _context.Carts.Remove(cart);
+
+    await _context.SaveChangesAsync();
+  }
 }

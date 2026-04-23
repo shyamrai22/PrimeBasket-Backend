@@ -24,6 +24,7 @@ public class CartController : ControllerBase
     return int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
   }
 
+  [AllowAnonymous]
   [HttpGet]
   public async Task<IActionResult> GetCart()
   {
@@ -49,5 +50,16 @@ public class CartController : ControllerBase
     {
       return BadRequest(new { message = ex.Message });
     }
+  }
+
+  [Authorize]
+  [HttpDelete]
+  public async Task<IActionResult> ClearCart()
+  {
+    var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+
+    await _service.ClearCartAsync(userId);
+
+    return Ok("Cart cleared");
   }
 }
