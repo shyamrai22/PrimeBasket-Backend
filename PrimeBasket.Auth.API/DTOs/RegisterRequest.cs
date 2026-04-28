@@ -13,6 +13,8 @@ namespace PrimeBasket.Auth.API.DTOs
     [Required, MinLength(6)]
     public string Password { get; set; } = string.Empty;
 
-    public string? AdminKey { get; set; }
+    public string Role { get; set; } = "Customer";
+
+    public string? RoleKey { get; set; }
   }
 }

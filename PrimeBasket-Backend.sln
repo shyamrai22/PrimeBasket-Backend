@@ -10,6 +10,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrimeBasket.Product.API", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrimeBasket.Cart.API", "PrimeBasket.Cart.API\PrimeBasket.Cart.API.csproj", "{5D2FA409-4230-4869-9F76-59D3CCFBCA32}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrimeBasket.Payment.API", "PrimeBasket.Payment.API\PrimeBasket.Payment.API.csproj", "{534B4BB5-A230-4008-AEAA-CB167BF36108}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,6 +34,10 @@ Global
 		{5D2FA409-4230-4869-9F76-59D3CCFBCA32}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5D2FA409-4230-4869-9F76-59D3CCFBCA32}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5D2FA409-4230-4869-9F76-59D3CCFBCA32}.Release|Any CPU.Build.0 = Release|Any CPU
+		{534B4BB5-A230-4008-AEAA-CB167BF36108}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{534B4BB5-A230-4008-AEAA-CB167BF36108}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{534B4BB5-A230-4008-AEAA-CB167BF36108}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{534B4BB5-A230-4008-AEAA-CB167BF36108}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -47,12 +47,17 @@ builder.Services.AddHttpContextAccessor();
 // -------------------- HttpClients --------------------
 builder.Services.AddHttpClient("ProductService", client =>
 {
-    client.BaseAddress = new Uri("http://localhost:5209/");
+    client.BaseAddress = new Uri(builder.Configuration["Services:Product"]!);
 });
 
 builder.Services.AddHttpClient("CartService", client =>
 {
-    client.BaseAddress = new Uri("http://localhost:5012/");
+    client.BaseAddress = new Uri(builder.Configuration["Services:Cart"]!);
+});
+
+builder.Services.AddHttpClient("PaymentService", client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["Services:Payment"]!);
 });
 
 // -------------------- Services --------------------
@@ -61,6 +66,17 @@ builder.Services.AddScoped<IOrderService, OrderService>();
 // -------------------- Controllers --------------------
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+
+// -------------------- CORS (important for frontend later) --------------------
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
 
 // -------------------- Swagger + JWT --------------------
 builder.Services.AddSwaggerGen(options =>
@@ -110,33 +126,37 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-// Global Exception Handler (Improved)
+app.UseHttpsRedirection();
+app.UseCors("AllowAll");
+
+// -------------------- Global Exception Handler --------------------
 app.Use(async (context, next) =>
 {
     try
     {
         await next();
     }
+    catch (NotFoundException ex)
+    {
+        context.Response.StatusCode = 404;
+        await context.Response.WriteAsJsonAsync(new { error = ex.Message });
+    }
     catch (BadRequestException ex)
     {
         context.Response.StatusCode = 400;
-        context.Response.ContentType = "application/json";
-
+        await context.Response.WriteAsJsonAsync(new { error = ex.Message });
+    }
+    /////////////////////////////////////////////
+    catch (Exception ex)
+    {
+        context.Response.StatusCode = 500;
         await context.Response.WriteAsJsonAsync(new
         {
             error = ex.Message
         });
     }
-    catch (Exception)
-    {
-        context.Response.StatusCode = 500;
-        context.Response.ContentType = "application/json";
+    /////////////////////////////////////////////
 
-        await context.Response.WriteAsJsonAsync(new
-        {
-            error = "Internal Server Error"
-        });
-    }
 });
 
 app.UseAuthentication();

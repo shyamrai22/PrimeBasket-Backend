@@ -39,11 +39,15 @@ public class AuthService : IAuthService
     string role = "Customer";
 
     var adminKeyFromConfig = _config["AdminSettings:AdminKey"];
+    var merchantKeyFromConfig = _config["RoleSettings:MerchantKey"];
 
-    if (!string.IsNullOrEmpty(request.AdminKey) &&
-        request.AdminKey == adminKeyFromConfig)
+    if (request.Role == "Admin" && !string.IsNullOrEmpty(request.RoleKey) && request.RoleKey == adminKeyFromConfig)
     {
       role = "Admin";
+    }
+    else if (request.Role == "Merchant" && !string.IsNullOrEmpty(request.RoleKey) && request.RoleKey == merchantKeyFromConfig)
+    {
+      role = "Merchant";
     }
 
     var user = new User

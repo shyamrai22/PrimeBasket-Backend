@@ -47,7 +47,7 @@ public class AuthController : ControllerBase
     return Ok("You are authenticated");
   }
 
-  [AllowAnonymous]
+  [Authorize(Roles = "Admin")]
   [HttpGet("users")]
   public async Task<IActionResult> GetUsers()
   {

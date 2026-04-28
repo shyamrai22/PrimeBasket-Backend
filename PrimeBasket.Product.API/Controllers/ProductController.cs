@@ -53,7 +53,7 @@ public class ProductController : ControllerBase
   }
 
   // -------------------- ADD PRODUCT --------------------
-  [Authorize(Roles = "Admin,admin")]
+  [Authorize(Roles = "Merchant,Admin")]
   [HttpPost]
   public async Task<IActionResult> Add(ProductRequest request)
   {
@@ -62,7 +62,7 @@ public class ProductController : ControllerBase
   }
 
   // -------------------- UPDATE PRODUCT --------------------
-  [Authorize(Roles = "Admin,admin")]
+  [Authorize(Roles = "Merchant,Admin")]
   [HttpPut("{id}")]
   public async Task<IActionResult> Update(int id, ProductRequest request)
   {
@@ -75,7 +75,7 @@ public class ProductController : ControllerBase
   }
 
   // -------------------- DELETE PRODUCT --------------------
-  [Authorize(Roles = "Admin,admin")]
+  [Authorize(Roles = "Merchant,Admin")]
   [HttpDelete("{id}")]
   public async Task<IActionResult> Delete(int id)
   {
@@ -130,5 +130,18 @@ public class ProductController : ControllerBase
     await _service.UpdateStockAsync(product);
 
     return Ok("Stock restored");
+  }
+
+  // -------------------- SEED PRODUCTS --------------------
+  [AllowAnonymous]
+  [HttpPost("seed")]
+  public async Task<IActionResult> SeedProducts()
+  {
+    var count = await _service.SeedProductsAsync();
+
+    if (count == 0)
+      return Ok("Database is already seeded or no products found.");
+
+    return Ok($"Successfully seeded {count} products from FakeStoreAPI!");
   }
 }
