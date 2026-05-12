@@ -23,6 +23,21 @@ public class ProductController : ControllerBase
   public async Task<IActionResult> GetAll()
   {
     var products = await _service.GetAllAsync();
+    // Filter out inactive/flagged for customers
+    if (!User.IsInRole("Admin") && !User.IsInRole("Merchant"))
+    {
+       products = products.Where(p => p.Status == "Active").ToList();
+    }
+    return Ok(products);
+  }
+
+  // -------------------- GET BY MERCHANT --------------------
+  [Authorize(Roles = "Merchant")]
+  [HttpGet("merchant")]
+  public async Task<IActionResult> GetByMerchant()
+  {
+    var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "0");
+    var products = await _service.GetByMerchantIdAsync(userId);
     return Ok(products);
   }
 
@@ -57,7 +72,15 @@ public class ProductController : ControllerBase
   [HttpPost]
   public async Task<IActionResult> Add(ProductRequest request)
   {
-    var product = await _service.AddProductAsync(request);
+    if (User.IsInRole("Merchant"))
+    {
+      var status = User.FindFirst("status")?.Value;
+      if (status != "Approved")
+        return StatusCode(403, new { message = "Only approved merchants can list products." });
+    }
+
+    var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "0");
+    var product = await _service.AddProductAsync(request, userId);
     return Ok(product);
   }
 
@@ -66,6 +89,20 @@ public class ProductController : ControllerBase
   [HttpPut("{id}")]
   public async Task<IActionResult> Update(int id, ProductRequest request)
   {
+    if (User.IsInRole("Merchant"))
+    {
+      var status = User.FindFirst("status")?.Value;
+      if (status != "Approved")
+        return StatusCode(403, new { message = "Only approved merchants can manage products." });
+
+      // Ensure merchant owns this product
+      var merchantId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "0");
+      var existing = await _service.GetByIdAsync(id);
+      if (existing == null) return NotFound("Product not found");
+      if (existing.MerchantId != merchantId)
+        return StatusCode(403, new { message = "You can only edit your own products." });
+    }
+
     var product = await _service.UpdateProductAsync(id, request);
 
     if (product == null)
@@ -79,12 +116,39 @@ public class ProductController : ControllerBase
   [HttpDelete("{id}")]
   public async Task<IActionResult> Delete(int id)
   {
+    if (User.IsInRole("Merchant"))
+    {
+      var status = User.FindFirst("status")?.Value;
+      if (status != "Approved")
+        return StatusCode(403, new { message = "Only approved merchants can manage products." });
+
+      // Ensure merchant owns this product
+      var merchantId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "0");
+      var existing = await _service.GetByIdAsync(id);
+      if (existing == null) return NotFound("Product not found");
+      if (existing.MerchantId != merchantId)
+        return StatusCode(403, new { message = "You can only delete your own products." });
+    }
+
     var result = await _service.DeleteProductAsync(id);
 
     if (!result)
       return NotFound("Product not found");
 
     return NoContent();
+  }
+
+  // -------------------- UPDATE STATUS --------------------
+  [Authorize(Roles = "Merchant,Admin")]
+  [HttpPut("{id}/status")]
+  public async Task<IActionResult> UpdateStatus(int id, [FromBody] string status)
+  {
+    var result = await _service.UpdateStatusAsync(id, status);
+
+    if (!result)
+      return NotFound("Product not found");
+
+    return Ok(new { message = "Status updated successfully" });
   }
 
   // -------------------- REDUCE STOCK --------------------

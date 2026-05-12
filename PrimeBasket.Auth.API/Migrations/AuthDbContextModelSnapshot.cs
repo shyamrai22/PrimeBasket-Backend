@@ -30,6 +30,12 @@ namespace PrimeBasket.Auth.API.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("BusinessName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BusinessType")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -47,6 +53,13 @@ namespace PrimeBasket.Auth.API.Migrations
 
                     b.Property<string>("Role")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StoreDescription")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");

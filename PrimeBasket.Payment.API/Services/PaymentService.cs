@@ -3,7 +3,6 @@ using PrimeBasket.Payments.API.Data;
 using PrimeBasket.Payments.API.DTOs;
 using PrimeBasket.Payments.API.Entities;
 using PrimeBasket.Payments.API.Interfaces;
-
 using Razorpay.Api;
 using Microsoft.Extensions.Configuration;
 using System.Security.Cryptography;
@@ -181,7 +180,15 @@ public class PaymentService : IPaymentService
         .FirstOrDefaultAsync(w => w.UserId == userId);
 
     if (wallet == null)
-      throw new Exception("Wallet not found");
+    {
+      wallet = new WalletModel
+      {
+        UserId = userId,
+        Balance = 0
+      };
+      await _context.Wallets.AddAsync(wallet);
+      await _context.SaveChangesAsync();
+    }
 
     wallet.Balance += request.Amount;
 
@@ -226,26 +233,33 @@ public class PaymentService : IPaymentService
 
   public async Task<RazorpayOrderResponse> CreateRazorpayOrderAsync(int userId, RazorpayOrderRequest request)
   {
-    var keyId = _configuration["Razorpay:KeyId"];
-    var keySecret = _configuration["Razorpay:KeySecret"];
-
-    var client = new RazorpayClient(keyId, keySecret);
-
-    var options = new Dictionary<string, object>
+    try
     {
-      { "amount", request.Amount * 100 }, // Razorpay expects amount in paise
-      { "currency", "INR" },
-      { "receipt", $"rcpt_{userId}_{DateTime.UtcNow.Ticks}" }
-    };
+      var keyId = _configuration["Razorpay:KeyId"];
+      var keySecret = _configuration["Razorpay:KeySecret"];
 
-    var order = client.Order.Create(options);
+      var client = new RazorpayClient(keyId, keySecret);
 
-    return new RazorpayOrderResponse
+      var options = new Dictionary<string, object>
+      {
+        { "amount", (long)(request.Amount * 100) }, // Razorpay expects amount in paise as integer
+        { "currency", "INR" },
+        { "receipt", $"rcpt_{userId}_{DateTime.UtcNow.Ticks}" }
+      };
+
+      var order = client.Order.Create(options);
+
+      return new RazorpayOrderResponse
+      {
+        OrderId = order["id"].ToString(),
+        Amount = request.Amount,
+        Currency = "INR"
+      };
+    }
+    catch (Exception ex)
     {
-      OrderId = order["id"].ToString(),
-      Amount = request.Amount,
-      Currency = "INR"
-    };
+      throw new Exception($"Razorpay Error: {ex.Message}");
+    }
   }
 
   public async Task<WalletResponse> VerifyRazorpayPaymentAsync(int userId, RazorpayVerifyRequest request)

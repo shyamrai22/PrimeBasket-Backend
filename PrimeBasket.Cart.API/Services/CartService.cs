@@ -130,4 +130,53 @@ public class CartService : ICartService
 
     await _context.SaveChangesAsync();
   }
+
+  public async Task<CartResponse> UpdateQuantityAsync(int userId, int productId, int quantity)
+  {
+    if (quantity <= 0 || quantity > 100)
+      throw new ArgumentException("Quantity must be between 1 and 100");
+
+    var cart = await _context.Carts
+        .Include(c => c.Items)
+        .FirstOrDefaultAsync(c => c.UserId == userId);
+
+    if (cart == null)
+      throw new NotFoundException("Cart not found");
+
+    var existingItem = cart.Items.FirstOrDefault(i => i.ProductId == productId);
+    if (existingItem == null)
+      throw new NotFoundException("Item not found in cart");
+
+    var stock = await GetProductStock(productId);
+    if (stock == null)
+      throw new NotFoundException("Product not found");
+
+    if (quantity > stock)
+      throw new ArgumentException($"Only {stock} items available in stock");
+
+    existingItem.Quantity = quantity;
+
+    await _context.SaveChangesAsync();
+    return MapToResponse(cart);
+  }
+
+  public async Task<CartResponse> RemoveItemAsync(int userId, int productId)
+  {
+    var cart = await _context.Carts
+        .Include(c => c.Items)
+        .FirstOrDefaultAsync(c => c.UserId == userId);
+
+    if (cart == null)
+      throw new NotFoundException("Cart not found");
+
+    var existingItem = cart.Items.FirstOrDefault(i => i.ProductId == productId);
+    if (existingItem != null)
+    {
+      cart.Items.Remove(existingItem);
+      _context.CartItems.Remove(existingItem);
+      await _context.SaveChangesAsync();
+    }
+
+    return MapToResponse(cart);
+  }
 }

@@ -45,8 +45,12 @@ public class AuthService : IAuthService
     {
       role = "Admin";
     }
-    else if (request.Role == "Merchant" && !string.IsNullOrEmpty(request.RoleKey) && request.RoleKey == merchantKeyFromConfig)
+    else if (request.Role == "Merchant")
     {
+      // If merchant key is missing or incorrect, fail explicitly
+      if (string.IsNullOrEmpty(request.RoleKey) || request.RoleKey != merchantKeyFromConfig)
+        return "Unauthorized: Invalid or missing merchant key.";
+
       role = "Merchant";
     }
 
@@ -55,7 +59,11 @@ public class AuthService : IAuthService
       FullName = request.FullName,
       Email = email,
       PasswordHash = _hasher.Hash(request.Password),
-      Role = role
+      Role = role,
+      Status = (role == "Merchant") ? "Pending" : "Approved",
+      BusinessName = request.BusinessName,
+      BusinessType = request.BusinessType,
+      StoreDescription = request.StoreDescription
     };
 
     _context.Users.Add(user);
@@ -79,11 +87,41 @@ public class AuthService : IAuthService
     if (!isValid)
       return "Invalid credentials";
 
+    if (user.Status == "Rejected")
+      return "Your account has been rejected. Please contact support.";
+
     return _tokenService.GenerateToken(user);
   }
 
-  public async Task<List<User>> GetAllUsersAsync()
+  public async Task<List<UserDto>> GetAllUsersAsync()
   {
-    return await _context.Users.ToListAsync();
+    return await _context.Users.Select(u => new UserDto
+    {
+      Id = u.Id,
+      FullName = u.FullName,
+      Email = u.Email,
+      Role = u.Role,
+      Status = u.Status,
+      BusinessName = u.BusinessName,
+      BusinessType = u.BusinessType,
+      StoreDescription = u.StoreDescription,
+      CreatedAt = u.CreatedAt
+    }).ToListAsync();
+  }
+
+  public async Task<bool> UpdateUserStatusAsync(int userId, string status)
+  {
+    var user = await _context.Users.FindAsync(userId);
+    if (user == null) return false;
+
+    user.Status = status;
+    await _context.SaveChangesAsync();
+    return true;
+  }
+
+  public async Task<string> GetUserStatusAsync(int userId)
+  {
+    var user = await _context.Users.FindAsync(userId);
+    return user?.Status ?? "";
   }
 }

@@ -56,6 +56,15 @@ public class OrderController : ControllerBase
     return Ok(orders);
   }
 
+  [Authorize(Roles = "Merchant")]
+  [HttpGet("merchant")]
+  public async Task<IActionResult> GetMerchantOrders()
+  {
+    var merchantId = GetUserId();
+    var orders = await _service.GetMerchantOrdersAsync(merchantId);
+    return Ok(orders);
+  }
+
   // ---------------- UPDATE STATUS (ADMIN) ----------------
   [Authorize(Roles = "Admin")]
   [HttpPut("{orderId}/status")]

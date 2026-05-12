@@ -1,0 +1,215 @@
+{
+	"info": {
+		"_postman_id": "1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d",
+		"name": "PrimeBasket API Collection",
+		"description": "Collection of API requests for the PrimeBasket Microservices.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1. Auth Service",
+			"item": [
+				{
+					"name": "Register User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"testuser@example.com\",\n  \"password\": \"Password123!\",\n  \"fullName\": \"Test User\",\n  \"role\": \"Customer\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5010/api/auth/register",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5010",
+							"path": [
+								"api",
+								"auth",
+								"register"
+							]
+						}
+					}
+				},
+				{
+					"name": "Login User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if(jsonData.token) {",
+									"    pm.collectionVariables.set(\"jwt_token\", jsonData.token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"testuser@example.com\",\n  \"password\": \"Password123!\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5010/api/auth/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5010",
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "2. Product Service",
+			"item": [
+				{
+					"name": "Get All Products",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5209/api/products",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5209",
+							"path": [
+								"api",
+								"products"
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "3. Cart Service",
+			"item": [
+				{
+					"name": "Add to Cart",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"productId\": 1,\n  \"quantity\": 1\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5012/api/cart",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5012",
+							"path": [
+								"api",
+								"cart"
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "4. Order Service",
+			"item": [
+				{
+					"name": "Checkout",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"paymentMethod\": \"COD\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5157/api/orders/checkout",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5157",
+							"path": [
+								"api",
+								"orders",
+								"checkout"
+							]
+						}
+					}
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{jwt_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "jwt_token",
+			"value": "",
+			"type": "string"
+		}
+	]
+}

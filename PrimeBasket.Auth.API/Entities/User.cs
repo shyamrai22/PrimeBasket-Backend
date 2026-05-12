@@ -10,7 +10,12 @@ public class User
 
   public string PasswordHash { get; set; } = string.Empty;
 
-  public string Role { get; set; } = "Customer";
+  public string Role { get; set; } = "Customer"; // Customer, Merchant, Admin
+
+  public string Status { get; set; } = "Approved"; // Pending, Approved, Rejected
+  public string? BusinessName { get; set; }
+  public string? BusinessType { get; set; }
+  public string? StoreDescription { get; set; }
 
   public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }

@@ -13,5 +13,6 @@ public interface IOrderService
   Task<string> UpdateOrderStatusAsync(int orderId, UpdateOrderStatusRequest request);
   Task<AdminStatsResponse> GetAdminStatsAsync();
   Task<List<OrderResponse>> GetAllOrdersAsync();
+  Task<List<OrderResponse>> GetMerchantOrdersAsync(int merchantId);
   Task<string> CancelOrderAsync(int userId, int orderId);
 }

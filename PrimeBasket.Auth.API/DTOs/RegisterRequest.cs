@@ -16,5 +16,8 @@ namespace PrimeBasket.Auth.API.DTOs
     public string Role { get; set; } = "Customer";
 
     public string? RoleKey { get; set; }
+    public string? BusinessName { get; set; }
+    public string? BusinessType { get; set; }
+    public string? StoreDescription { get; set; }
   }
 }

@@ -7,5 +7,7 @@ public interface IAuthService
 {
   Task<string> RegisterAsync(RegisterRequest request);
   Task<string> LoginAsync(LoginRequest request);
-  Task<List<PrimeBasket.Auth.API.Entities.User>> GetAllUsersAsync();
+  Task<List<UserDto>> GetAllUsersAsync();
+  Task<bool> UpdateUserStatusAsync(int userId, string status);
+  Task<string> GetUserStatusAsync(int userId);
 }

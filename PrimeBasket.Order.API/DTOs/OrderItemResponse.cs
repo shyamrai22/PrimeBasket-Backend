@@ -11,4 +11,5 @@ public class OrderItemResponse
   public decimal Price { get; set; }
 
   public decimal TotalPrice { get; set; }
+  public int MerchantId { get; set; }
 }

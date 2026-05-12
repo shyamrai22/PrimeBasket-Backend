@@ -84,9 +84,16 @@ public class PaymentController : ControllerBase
   [HttpPost("wallet/recharge/create-order")]
   public async Task<IActionResult> CreateRazorpayOrder([FromBody] RazorpayOrderRequest request)
   {
-    var userId = GetUserId();
-    var order = await _service.CreateRazorpayOrderAsync(userId, request);
-    return Ok(order);
+    try
+    {
+      var userId = GetUserId();
+      var order = await _service.CreateRazorpayOrderAsync(userId, request);
+      return Ok(order);
+    }
+    catch (Exception ex)
+    {
+      return BadRequest(new { message = ex.Message });
+    }
   }
 
   [HttpPost("wallet/recharge/verify")]

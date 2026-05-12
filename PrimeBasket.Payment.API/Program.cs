@@ -40,6 +40,11 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+// -------------------- RabbitMQ --------------------
+builder.Services.Configure<PrimeBasket.Common.Messaging.RabbitMQSettings>(
+    builder.Configuration.GetSection("RabbitMQ"));
+builder.Services.AddHostedService<PrimeBasket.Payment.API.Messaging.OrderPlacedConsumer>();
+
 // -------------------- Services --------------------
 builder.Services.AddScoped<IPaymentService, PaymentService>();
 

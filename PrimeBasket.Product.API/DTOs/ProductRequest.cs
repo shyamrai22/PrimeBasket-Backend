@@ -7,4 +7,5 @@ public class ProductRequest
   public decimal Price { get; set; }
   public int Stock { get; set; }
   public string ImageUrl { get; set; } = string.Empty;
+  public string Category { get; set; } = string.Empty;
 }

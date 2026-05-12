@@ -6,6 +6,8 @@ using PrimeBasket.Orders.API.Entities;
 using PrimeBasket.Orders.API.Exceptions;
 using PrimeBasket.Orders.API.Interfaces;
 using PrimeBasket.Orders.API.Enums;
+using PrimeBasket.Common.Messaging;
+using PrimeBasket.Common.Events;
 
 namespace PrimeBasket.Orders.API.Services;
 
@@ -16,17 +18,20 @@ public class OrderService : IOrderService
   private readonly HttpClient _cartClient;
   private readonly HttpClient _paymentClient;
   private readonly IHttpContextAccessor _httpContextAccessor;
+  private readonly IMessageProducer _messageProducer;
 
   public OrderService(
       OrderDbContext context,
       IHttpClientFactory httpClientFactory,
-      IHttpContextAccessor httpContextAccessor)
+      IHttpContextAccessor httpContextAccessor,
+      IMessageProducer messageProducer)
   {
     _context = context;
     _productClient = httpClientFactory.CreateClient("ProductService");
     _cartClient = httpClientFactory.CreateClient("CartService");
     _paymentClient = httpClientFactory.CreateClient("PaymentService");
     _httpContextAccessor = httpContextAccessor;
+    _messageProducer = messageProducer;
   }
 
   public async Task<OrderResponse> CheckoutAsync(int userId, CheckoutRequest requestDto)
@@ -84,6 +89,22 @@ public class OrderService : IOrderService
 
     await ClearCart(token);
 
+    // Publish OrderPlacedEvent to RabbitMQ
+    var orderPlacedEvent = new OrderPlacedEvent
+    {
+      OrderId = order.Id,
+      UserId = order.UserId,
+      TotalAmount = order.TotalAmount,
+      Items = order.Items.Select(i => new OrderItemEvent
+      {
+        ProductId = i.ProductId,
+        Quantity = i.Quantity,
+        Price = i.Price,
+        MerchantId = i.MerchantId
+      }).ToList()
+    };
+    _messageProducer.SendMessage(orderPlacedEvent, "order.placed");
+
     return MapToResponse(order);
   }
 
@@ -121,6 +142,7 @@ public class OrderService : IOrderService
                 new OrderItem
                 {
                     ProductId = request.ProductId,
+                    MerchantId = product.MerchantId,
                     Quantity = request.Quantity,
                     Price = product.Price
                 }
@@ -129,6 +151,22 @@ public class OrderService : IOrderService
 
     _context.Orders.Add(order);
     await _context.SaveChangesAsync();
+
+    // Publish OrderPlacedEvent to RabbitMQ
+    var orderPlacedEvent = new OrderPlacedEvent
+    {
+      OrderId = order.Id,
+      UserId = order.UserId,
+      TotalAmount = order.TotalAmount,
+      Items = order.Items.Select(i => new OrderItemEvent
+      {
+        ProductId = i.ProductId,
+        Quantity = i.Quantity,
+        Price = i.Price,
+        MerchantId = i.MerchantId
+      }).ToList()
+    };
+    _messageProducer.SendMessage(orderPlacedEvent, "order.placed");
 
     return MapToResponse(order);
   }
@@ -176,11 +214,44 @@ public class OrderService : IOrderService
       {
         OrderItemId = i.Id,
         ProductId = i.ProductId,
+        MerchantId = i.MerchantId,
         Quantity = i.Quantity,
         Price = i.Price,
         TotalPrice = i.TotalPrice
       }).ToList()
     };
+  }
+
+  public async Task<List<OrderResponse>> GetMerchantOrdersAsync(int merchantId)
+  {
+    var orders = await _context.Orders
+        .Include(o => o.Items)
+        .Where(o => o.Items.Any(i => i.MerchantId == merchantId))
+        .OrderByDescending(o => o.CreatedAt)
+        .ToListAsync();
+
+    // Filter items to only show the ones belonging to this merchant
+    var response = orders.Select(o => new OrderResponse
+    {
+      OrderId = o.Id,
+      UserId = o.UserId,
+      CreatedAt = o.CreatedAt,
+      Status = o.Status.ToString(),
+      TotalAmount = o.Items.Where(i => i.MerchantId == merchantId).Sum(i => i.TotalPrice),
+      PaymentId = o.PaymentId,
+      PaymentMethod = o.PaymentMethod,
+      Items = o.Items.Where(i => i.MerchantId == merchantId).Select(i => new OrderItemResponse
+      {
+        OrderItemId = i.Id,
+        ProductId = i.ProductId,
+        MerchantId = i.MerchantId,
+        Quantity = i.Quantity,
+        Price = i.Price,
+        TotalPrice = i.TotalPrice
+      }).ToList()
+    }).ToList();
+
+    return response;
   }
 
   public async Task<List<OrderResponse>> GetUserOrdersAsync(int userId)
@@ -357,6 +428,7 @@ public class OrderService : IOrderService
       orderItems.Add(new OrderItem
       {
         ProductId = item.ProductId,
+        MerchantId = product.MerchantId,
         Quantity = item.Quantity,
         Price = product.Price
       });

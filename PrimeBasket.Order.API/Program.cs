@@ -60,6 +60,11 @@ builder.Services.AddHttpClient("PaymentService", client =>
     client.BaseAddress = new Uri(builder.Configuration["Services:Payment"]!);
 });
 
+// -------------------- RabbitMQ --------------------
+builder.Services.Configure<PrimeBasket.Common.Messaging.RabbitMQSettings>(
+    builder.Configuration.GetSection("RabbitMQ"));
+builder.Services.AddScoped<PrimeBasket.Common.Messaging.IMessageProducer, PrimeBasket.Common.Messaging.RabbitMQProducer>();
+
 // -------------------- Services --------------------
 builder.Services.AddScoped<IOrderService, OrderService>();
 
