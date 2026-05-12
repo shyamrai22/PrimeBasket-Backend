@@ -11,7 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // DB
 builder.Services.AddDbContext<ProductDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // JWT
 var key = Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!);
@@ -95,4 +95,12 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<ProductDbContext>();
+    db.Database.Migrate();
+}
+
 app.Run();
+
