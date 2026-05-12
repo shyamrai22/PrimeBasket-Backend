@@ -24,7 +24,7 @@ public class CartController : ControllerBase
     return int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
   }
 
-  [AllowAnonymous]
+  [Authorize]
   [HttpGet]
   public async Task<IActionResult> GetCart()
   {
@@ -56,10 +56,44 @@ public class CartController : ControllerBase
   [HttpDelete]
   public async Task<IActionResult> ClearCart()
   {
-    var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
-
+    var userId = GetUserId();
     await _service.ClearCartAsync(userId);
-
     return Ok("Cart cleared");
+  }
+
+  [Authorize]
+  [HttpPut("{productId}")]
+  public async Task<IActionResult> UpdateQuantity(int productId, [FromBody] UpdateQuantityRequest request)
+  {
+    try
+    {
+      var userId = GetUserId();
+      var cart = await _service.UpdateQuantityAsync(userId, productId, request.Quantity);
+      return Ok(cart);
+    }
+    catch (NotFoundException ex)
+    {
+      return NotFound(new { message = ex.Message });
+    }
+    catch (ArgumentException ex)
+    {
+      return BadRequest(new { message = ex.Message });
+    }
+  }
+
+  [Authorize]
+  [HttpDelete("{productId}")]
+  public async Task<IActionResult> RemoveItem(int productId)
+  {
+    try
+    {
+      var userId = GetUserId();
+      var cart = await _service.RemoveItemAsync(userId, productId);
+      return Ok(cart);
+    }
+    catch (NotFoundException ex)
+    {
+      return NotFound(new { message = ex.Message });
+    }
   }
 }

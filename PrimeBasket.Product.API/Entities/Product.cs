@@ -11,4 +11,10 @@ public class Product
   public decimal Price { get; set; }
 
   public int Stock { get; set; }
+
+  public string ImageUrl { get; set; } = string.Empty;
+  public string Category { get; set; } = string.Empty;
+
+  public int MerchantId { get; set; } // The ID of the merchant who owns this product
+  public string Status { get; set; } = "Active"; // Active, Inactive, Flagged
 }

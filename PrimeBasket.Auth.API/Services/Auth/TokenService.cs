@@ -21,7 +21,11 @@ public class TokenService
     {
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new Claim(ClaimTypes.Email, user.Email),
-            new Claim(ClaimTypes.Role, user.Role)
+            new Claim(ClaimTypes.Role, user.Role),
+            new Claim("status", user.Status),
+            new Claim(ClaimTypes.Name, user.FullName),
+            new Claim("businessName", user.BusinessName ?? ""),
+            new Claim("storeDescription", user.StoreDescription ?? "")
         };
 
     var key = new SymmetricSecurityKey(

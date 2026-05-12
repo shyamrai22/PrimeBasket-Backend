@@ -1,6 +1,10 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace PrimeBasket.Orders.API.DTOs;
 
 public class CheckoutRequest
 {
-  // Empty for now → we’ll fetch cart internally
+    [Required]
+    [RegularExpression("^(Wallet|COD)$", ErrorMessage = "PaymentMethod must be 'Wallet' or 'COD'")]
+    public string PaymentMethod { get; set; } = string.Empty;
 }

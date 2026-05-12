@@ -37,18 +37,6 @@ builder.Services.AddAuthentication(options =>
 
         RoleClaimType = ClaimTypes.Role
     };
-
-    options.Events = new JwtBearerEvents
-    {
-        OnAuthenticationFailed = context =>
-        {
-            Console.WriteLine("==== JWT AUTH FAILED ====");
-            Console.WriteLine(context.Exception.Message);
-            if (context.Exception.InnerException != null)
-                Console.WriteLine("Inner: " + context.Exception.InnerException.Message);
-            return Task.CompletedTask;
-        }
-    };
 });
 
 // -------------------- Services --------------------
