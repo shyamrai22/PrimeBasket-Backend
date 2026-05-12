@@ -1,0 +1,23 @@
+using System.ComponentModel.DataAnnotations;
+
+namespace PrimeBasket.Auth.API.DTOs
+{
+  public class RegisterRequest
+  {
+    [Required]
+    public string FullName { get; set; } = string.Empty;
+
+    [Required, EmailAddress]
+    public string Email { get; set; } = string.Empty;
+
+    [Required, MinLength(6)]
+    public string Password { get; set; } = string.Empty;
+
+    public string Role { get; set; } = "Customer";
+
+    public string? RoleKey { get; set; }
+    public string? BusinessName { get; set; }
+    public string? BusinessType { get; set; }
+    public string? StoreDescription { get; set; }
+  }
+}
