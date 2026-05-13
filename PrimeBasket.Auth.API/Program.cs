@@ -98,6 +98,37 @@ using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AuthDbContext>();
     db.Database.Migrate();
+
+    if (!db.Users.Any(u => u.Role == "Admin"))
+    {
+        var hasher = scope.ServiceProvider.GetRequiredService<PrimeBasket.Auth.API.Services.Auth.PasswordHasher>();
+        db.Users.Add(new PrimeBasket.Auth.API.Entities.User
+        {
+            FullName = "System Admin",
+            Email = "admin@primebasket.com",
+            PasswordHash = hasher.Hash("Admin@123"),
+            Role = "Admin",
+            Status = "Approved"
+        });
+        db.SaveChanges();
+    }
+
+    if (!db.Users.Any(u => u.Role == "Merchant"))
+    {
+        var hasher = scope.ServiceProvider.GetRequiredService<PrimeBasket.Auth.API.Services.Auth.PasswordHasher>();
+        db.Users.Add(new PrimeBasket.Auth.API.Entities.User
+        {
+            FullName = "Premium Merchant",
+            Email = "merchant@primebasket.com",
+            PasswordHash = hasher.Hash("Merchant@123"),
+            Role = "Merchant",
+            Status = "Approved",
+            BusinessName = "Premium Electronics",
+            BusinessType = "Retail",
+            StoreDescription = "Top tier electronics store."
+        });
+        db.SaveChanges();
+    }
 }
 
 app.Run();

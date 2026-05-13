@@ -100,6 +100,57 @@ using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<ProductDbContext>();
     db.Database.Migrate();
+
+    if (!db.Products.Any())
+    {
+        db.Products.AddRange(
+            new PrimeBasket.Product.API.Entities.Product
+            {
+                Name = "MacBook Pro M3",
+                Description = "Latest Apple MacBook Pro with M3 chip, 16GB RAM, 512GB SSD.",
+                Price = 1999.99m,
+                Stock = 25,
+                Category = "Laptops",
+                MerchantId = 2, // Corresponds to the seeded Premium Merchant
+                ImageUrl = "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=800&q=80",
+                Status = "Active"
+            },
+            new PrimeBasket.Product.API.Entities.Product
+            {
+                Name = "Sony WH-1000XM5",
+                Description = "Industry leading noise canceling wireless headphones.",
+                Price = 348.00m,
+                Stock = 50,
+                Category = "Audio",
+                MerchantId = 2,
+                ImageUrl = "https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?auto=format&fit=crop&w=800&q=80",
+                Status = "Active"
+            },
+            new PrimeBasket.Product.API.Entities.Product
+            {
+                Name = "Samsung Galaxy S24 Ultra",
+                Description = "Samsung's flagship smartphone with Galaxy AI features.",
+                Price = 1299.00m,
+                Stock = 30,
+                Category = "Smartphones",
+                MerchantId = 2,
+                ImageUrl = "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=800&q=80",
+                Status = "Active"
+            },
+            new PrimeBasket.Product.API.Entities.Product
+            {
+                Name = "Dell UltraSharp 27 4K Monitor",
+                Description = "Brilliant 4K monitor with amazing color accuracy.",
+                Price = 599.99m,
+                Stock = 15,
+                Category = "Monitors",
+                MerchantId = 2,
+                ImageUrl = "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&w=800&q=80",
+                Status = "Active"
+            }
+        );
+        db.SaveChanges();
+    }
 }
 
 app.Run();
