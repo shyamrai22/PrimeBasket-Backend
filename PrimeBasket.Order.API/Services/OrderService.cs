@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using PrimeBasket.Orders.API.Data;
 using PrimeBasket.Orders.API.DTOs;
 using PrimeBasket.Orders.API.Entities;
+using Order = PrimeBasket.Orders.API.Entities.Order;
 using PrimeBasket.Orders.API.Exceptions;
 using PrimeBasket.Orders.API.Interfaces;
 using PrimeBasket.Orders.API.Enums;
@@ -74,8 +75,7 @@ public class OrderService : IOrderService
     foreach (var item in cart.Items)
       await ReduceStock(item.ProductId, item.Quantity);
 
-    var order = new Order
-    {
+    var order = new PrimeBasket.Orders.API.Entities.Order {
       UserId = userId,
       PaymentId = paymentResult.PaymentId,
       PaymentMethod = requestDto.PaymentMethod,
@@ -130,8 +130,7 @@ public class OrderService : IOrderService
 
     await ReduceStock(request.ProductId, request.Quantity);
 
-    var order = new Order
-    {
+    var order = new PrimeBasket.Orders.API.Entities.Order {
       UserId = userId,
       PaymentId = paymentResult.PaymentId,
       PaymentMethod = request.PaymentMethod,
@@ -199,7 +198,7 @@ public class OrderService : IOrderService
            ?? throw new Exception("Invalid payment response");
   }
 
-  private OrderResponse MapToResponse(Order order)
+  private OrderResponse MapToResponse(PrimeBasket.Orders.API.Entities.Order order)
   {
     return new OrderResponse
     {
@@ -450,3 +449,4 @@ public class OrderService : IOrderService
     }
   }
 }
+

@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using PrimeBasket.Orders.API.Entities;
+using Order = PrimeBasket.Orders.API.Entities.Order;
 
 namespace PrimeBasket.Orders.API.Data;
 
@@ -8,7 +9,7 @@ public class OrderDbContext : DbContext
   public OrderDbContext(DbContextOptions<OrderDbContext> options)
       : base(options) { }
 
-  public DbSet<Order> Orders => Set<Order>();
+  public DbSet<PrimeBasket.Orders.API.Entities.Order> Orders => Set<PrimeBasket.Orders.API.Entities.Order>();
   public DbSet<OrderItem> OrderItems => Set<OrderItem>();
 
   protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -16,11 +17,11 @@ public class OrderDbContext : DbContext
     base.OnModelCreating(modelBuilder);
 
     // ---------------- ORDER ----------------
-    modelBuilder.Entity<Order>()
+    modelBuilder.Entity<PrimeBasket.Orders.API.Entities.Order>()
         .Property(o => o.TotalAmount)
         .HasPrecision(18, 2);
 
-    modelBuilder.Entity<Order>()
+    modelBuilder.Entity<PrimeBasket.Orders.API.Entities.Order>()
         .HasIndex(o => o.UserId);
 
     // ---------------- ORDER ITEM ----------------
@@ -35,3 +36,4 @@ public class OrderDbContext : DbContext
         .OnDelete(DeleteBehavior.Cascade);
   }
 }
+
