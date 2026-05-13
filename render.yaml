@@ -64,6 +64,8 @@ services:
         sync: false
       - key: RabbitMQ__HostName
         sync: false
+      - key: Services__Product
+        value: https://primebasket-product.onrender.com/
 
   # 5. Order Service
   - type: web
@@ -80,6 +82,12 @@ services:
         sync: false
       - key: RabbitMQ__HostName
         sync: false
+      - key: Services__Product
+        value: https://primebasket-product.onrender.com/
+      - key: Services__Cart
+        value: https://primebasket-cart.onrender.com/
+      - key: Services__Payment
+        value: https://primebasket-payment.onrender.com/
 
   # 6. Payment Service
   - type: web
