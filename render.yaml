@@ -1,0 +1,98 @@
+version: "1"
+
+services:
+  # 1. API Gateway
+  - type: web
+    name: primebasket-gateway
+    env: docker
+    region: ohio
+    plan: free
+    dockerfilePath: ./PrimeBasket.ApiGateway/Dockerfile
+    dockerContext: .
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: Jwt__Key
+        sync: false
+
+  # 2. Auth Service
+  - type: web
+    name: primebasket-auth
+    env: docker
+    region: ohio
+    plan: free
+    dockerfilePath: ./PrimeBasket.Auth.API/Dockerfile
+    dockerContext: .
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: ConnectionStrings__DefaultConnection
+        sync: false
+      - key: RabbitMQ__HostName
+        sync: false
+      - key: Jwt__Key
+        sync: false
+
+  # 3. Product Service
+  - type: web
+    name: primebasket-product
+    env: docker
+    region: ohio
+    plan: free
+    dockerfilePath: ./PrimeBasket.Product.API/Dockerfile
+    dockerContext: .
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: ConnectionStrings__DefaultConnection
+        sync: false
+      - key: RabbitMQ__HostName
+        sync: false
+
+  # 4. Cart Service
+  - type: web
+    name: primebasket-cart
+    env: docker
+    region: ohio
+    plan: free
+    dockerfilePath: ./PrimeBasket.Cart.API/Dockerfile
+    dockerContext: .
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: ConnectionStrings__DefaultConnection
+        sync: false
+      - key: RabbitMQ__HostName
+        sync: false
+
+  # 5. Order Service
+  - type: web
+    name: primebasket-order
+    env: docker
+    region: ohio
+    plan: free
+    dockerfilePath: ./PrimeBasket.Order.API/Dockerfile
+    dockerContext: .
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: ConnectionStrings__DefaultConnection
+        sync: false
+      - key: RabbitMQ__HostName
+        sync: false
+
+  # 6. Payment Service
+  - type: web
+    name: primebasket-payment
+    env: docker
+    region: ohio
+    plan: free
+    dockerfilePath: ./PrimeBasket.Payment.API/Dockerfile
+    dockerContext: .
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: ConnectionStrings__DefaultConnection
+        sync: false
+      - key: RabbitMQ__HostName
+        sync: false
