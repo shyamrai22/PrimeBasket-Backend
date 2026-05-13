@@ -24,12 +24,17 @@ public class OrderPlacedConsumer : BackgroundService
 
     private void InitializeRabbitMQ()
     {
-        var factory = new ConnectionFactory
+        var factory = new ConnectionFactory();
+        if (_settings.Hostname.StartsWith("amqp"))
         {
-            HostName = _settings.Hostname,
-            UserName = _settings.Username,
-            Password = _settings.Password
-        };
+            factory.Uri = new Uri(_settings.Hostname);
+        }
+        else
+        {
+            factory.HostName = _settings.Hostname;
+            factory.UserName = _settings.Username;
+            factory.Password = _settings.Password;
+        }
 
         _connection = factory.CreateConnection();
         _channel = _connection.CreateModel();

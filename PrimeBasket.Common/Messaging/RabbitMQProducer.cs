@@ -21,12 +21,17 @@ public class RabbitMQProducer : IMessageProducer
 
     public void SendMessage<T>(T message, string routingKey)
     {
-        var factory = new ConnectionFactory
+        var factory = new ConnectionFactory();
+        if (_settings.Hostname.StartsWith("amqp"))
         {
-            HostName = _settings.Hostname,
-            UserName = _settings.Username,
-            Password = _settings.Password
-        };
+            factory.Uri = new Uri(_settings.Hostname);
+        }
+        else
+        {
+            factory.HostName = _settings.Hostname;
+            factory.UserName = _settings.Username;
+            factory.Password = _settings.Password;
+        }
 
         using var connection = factory.CreateConnection();
         using var channel = connection.CreateModel();
