@@ -1,7 +1,7 @@
 param(
-    [string]$ProjectKey = "PrimeBasket",
+    [string]$ProjectKey = "PrimeBasket-Backend",
     [string]$HostUrl = "http://localhost:9000",
-    [string]$Token = "sqp_d7570e72fdf36ea80fb9b729d4dd7af0663575b9"
+    [string]$Token = "sqp_e3d53ce55c4316e6bcd34a8dade9ee407250affb"
 )
 
 # Ensure the script stops on errors

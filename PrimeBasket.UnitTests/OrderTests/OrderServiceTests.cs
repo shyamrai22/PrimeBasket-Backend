@@ -6,6 +6,7 @@ using NUnit.Framework;
 using PrimeBasket.Orders.API.Data;
 using PrimeBasket.Orders.API.DTOs;
 using PrimeBasket.Orders.API.Entities;
+using OrderEntity = PrimeBasket.Orders.API.Entities.Order;
 using PrimeBasket.Orders.API.Enums;
 using PrimeBasket.Orders.API.Services;
 
@@ -60,9 +61,9 @@ public class OrderServiceTests
         // Arrange
         var service = CreateService();
         var userId = 1;
-        _context.Orders.Add(new Order { UserId = userId, TotalAmount = 100, Status = OrderStatus.Paid, PaymentMethod = "Wallet", Items = new List<OrderItem>() });
-        _context.Orders.Add(new Order { UserId = userId, TotalAmount = 200, Status = OrderStatus.Pending, PaymentMethod = "COD", Items = new List<OrderItem>() });
-        _context.Orders.Add(new Order { UserId = 2, TotalAmount = 300, Status = OrderStatus.Paid, PaymentMethod = "Wallet", Items = new List<OrderItem>() });
+        _context.Orders.Add(new OrderEntity { UserId = userId, TotalAmount = 100, Status = OrderStatus.Paid, PaymentMethod = "Wallet", Items = new List<OrderItem>() });
+        _context.Orders.Add(new OrderEntity { UserId = userId, TotalAmount = 200, Status = OrderStatus.Pending, PaymentMethod = "COD", Items = new List<OrderItem>() });
+        _context.Orders.Add(new OrderEntity { UserId = 2, TotalAmount = 300, Status = OrderStatus.Paid, PaymentMethod = "Wallet", Items = new List<OrderItem>() });
         await _context.SaveChangesAsync();
 
         // Act
@@ -78,10 +79,10 @@ public class OrderServiceTests
     {
         // Arrange
         var service = CreateService();
-        _context.Orders.Add(new Order { TotalAmount = 100, Status = OrderStatus.Paid, PaymentMethod = "Wallet", Items = new List<OrderItem>() });
-        _context.Orders.Add(new Order { TotalAmount = 200, Status = OrderStatus.Pending, PaymentMethod = "Wallet", Items = new List<OrderItem>() });
-        _context.Orders.Add(new Order { TotalAmount = 300, Status = OrderStatus.Cancelled, PaymentMethod = "Wallet", Items = new List<OrderItem>() });
-        _context.Orders.Add(new Order { TotalAmount = 400, Status = OrderStatus.Delivered, PaymentMethod = "Wallet", Items = new List<OrderItem>() });
+        _context.Orders.Add(new OrderEntity { TotalAmount = 100, Status = OrderStatus.Paid, PaymentMethod = "Wallet", Items = new List<OrderItem>() });
+        _context.Orders.Add(new OrderEntity { TotalAmount = 200, Status = OrderStatus.Pending, PaymentMethod = "Wallet", Items = new List<OrderItem>() });
+        _context.Orders.Add(new OrderEntity { TotalAmount = 300, Status = OrderStatus.Cancelled, PaymentMethod = "Wallet", Items = new List<OrderItem>() });
+        _context.Orders.Add(new OrderEntity { TotalAmount = 400, Status = OrderStatus.Delivered, PaymentMethod = "Wallet", Items = new List<OrderItem>() });
         await _context.SaveChangesAsync();
 
         // Act
@@ -100,7 +101,7 @@ public class OrderServiceTests
         // Arrange
         var service = CreateService();
         var merchantId = 10;
-        var order = new Order
+        var order = new OrderEntity
         {
             UserId = 1,
             TotalAmount = 500,
@@ -129,7 +130,7 @@ public class OrderServiceTests
     {
         // Arrange
         var service = CreateService();
-        var order = new Order { UserId = 1, TotalAmount = 100, Status = OrderStatus.Pending, Items = new List<OrderItem>() };
+        var order = new OrderEntity { UserId = 1, TotalAmount = 100, Status = OrderStatus.Pending, Items = new List<OrderItem>() };
         _context.Orders.Add(order);
         await _context.SaveChangesAsync();
 
@@ -149,7 +150,7 @@ public class OrderServiceTests
     {
         // Arrange
         var userId = 1;
-        var order = new Order 
+        var order = new OrderEntity 
         { 
             UserId = userId, 
             TotalAmount = 500, 
